@@ -1,9 +1,8 @@
 //For info on documentation see: https://github.com/mdingena/att-client/tree/docs
 //Other examples can be found at: https://github.com/mdingena/att-client/tree/main/examples
 
-
-
-const { Client } = require('att-client'); //main att client 
+require('dotenv').config()
+const { Client } = require('att-client'); //main att client  
 
 //TODO - Review these files for more information on how to get started
 // Install the recogmended extensions for better documentation(Ctrl+Shift+X -> Extensions: Install Extensions -> Search for Better Comments & Comment Anchors -> Install)
@@ -22,7 +21,11 @@ const bot = new Client(myUserConfig) // uncomment if useing user credentials
 const connections=[]; //array to store connections to servers to access outside of the connect event stream
 //--------------------------------------------------------------------------------
 
-let server_id = 1338967474; //insert server id for the server (only if using user credentials)
+//1717578363 = a testing tale
+//1724889222 = A Hot Tale PCVR
+//1544126061 = TKATT Not happening
+
+let server_id = 1717578363; //insert server id for the server (only if using user credentials)
 
 // This main function is where we will run the bot from
 /**
@@ -46,15 +49,17 @@ async function main() {
 
     //! Example of subscribing to a server event stream
 
-    connection.subscribe('PlayerJoined', (event) => {
-      const PlayerJoined = event.data.user.username;
-      console.log(`Player ${event.data.user.username} (${event.data.user.id}) joined the server.`); //logs when a player joins the server
+    connection.subscribe('PlayerStateChanged', (event) => {
+      const NotNice = event.data.user.username;
 
-      if(event.data.user.username == 'TheRavenSeb'){ //checks if the player that joined is the bot
-       console.log('I has joined the server')
-      }
-      else if(event.data.user.username == 'Beepu'){ //checks if the player that joined is Beepu
-        console.log('Beepu has joined the server')
+      if(NotNice === 'MinerAlex'){ //Checks if the player that enterd combat is MinerAlex
+       connection.send('player modify-stat 608286242 speed 7 180')
+       connection.send('player modify-stat 608286242 damage 99999 180')
+       connection.send('player modify-stat 608286242 DamageProtection 15 180')
+       connection.send('player set-stat 608286242 hunger 2')
+       connection.send('player message MinerAlex "get buffed" 5') //sends a message to the console onece the command finishes
+       connection.send('player message * "Grrrrrrrrrrrrrrrrr" 10')
+       console.log('Bro has been buffed')
       }
 
 
@@ -106,4 +111,4 @@ if(!connection){return console.error('No connection found')
 
 }
 main()
-//NOTE - to run the file use node index.js in the terminal
+//NOTE - to run the file use node index.js in the terminal// NOTE - to run the file use node index.js in the terminal

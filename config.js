@@ -2,8 +2,8 @@
 require('dotenv').config();
 module.exports={
    myUserConfig:{// Enter if using user credentials 
-  username: 'TheRavenSeb',
-  password: process.env.userpass,
+  username: 'MinerAlex',
+  password: process.env.userpassword,
   logVerbosity: 3},// Increase to see debuger logs 
 
    myBotConfig:{// Enter if using bot credintals 
