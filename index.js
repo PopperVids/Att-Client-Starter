@@ -20,7 +20,6 @@ const { myUserConfig } = require('./config'); // Uncomment if the config for bot
 const bot = new Client(myUserConfig) // uncomment if useing user credentials 
 const connections=[]; //array to store connections to servers to access outside of the connect event stream
 //--------------------------------------------------------------------------------
-//server Ids
 //1717578363 = a testing tale
 //1724889222 = A Hot Tale PCVR
 //1544126061 = TKATT Not happening

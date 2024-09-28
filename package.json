@@ -12,8 +12,12 @@
   "dependencies": {
     "@types/node": "^18.0.6",
     "att-client": "^0.4.13",
+    "discord.js": "^14.16.2",
     "dotenv": "^16.4.5",
     "node-fetch": "^3.2.6"
   },
-  "homepage": "https://github.com/owner/project#readme"
+  "homepage": "https://github.com/owner/project#readme",
+  "devDependencies": {
+    "eslint": "^9.11.1"
+  }
 }
