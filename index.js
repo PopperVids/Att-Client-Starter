@@ -15,19 +15,19 @@ const connections = [];
 //326671867 = a hot tale
 //1717578363 = a testing tale
 
-let server_id = 1717578363; // Insert server id for the server (only if using user credentials)
+let server_id = 1717578363; // The server ID to connect to
 
-// When the Discord client is ready, run this code (only once).
+// Logs when the Discord Bot is ready
 discordClient.once(Events.ClientReady, readyClient => {
-  console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+  console.log(`Logged in as ${readyClient.user.tag}`);
 });
 
-// Log in to Discord with your client's token
+// Log in to Discord with A client token
 discordClient.login(token);
 
-// Main function to run the ATT client
+// Main function to run ATT client
 async function main() {
-  await attClient.start(); // Starts the ATT client
+  await attClient.start(); // Starts ATT client
 
   attClient.openServerConnection(server_id); // Opens a connection to the server with the id of server_id
 
