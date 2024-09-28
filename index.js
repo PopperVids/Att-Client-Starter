@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { Client: DiscordClient, Events, GatewayIntentBits } = require('discord.js');
+const { Client: DiscordClient, Collection, Events, GatewayIntentBits } = require('discord.js');
 const { token } = require('./config.json');
 const { Client: AttClient } = require('att-client');
 const { myUserConfig } = require('./config');
@@ -15,7 +15,7 @@ const connections = [];
 //326671867 = a hot tale
 //1717578363 = a testing tale
 
-let server_id = 1717578363; // The server ID to connect to
+let server_id = 1724889222; // The server ID to connect to
 
 // Logs when the Discord Bot is ready
 discordClient.once(Events.ClientReady, readyClient => {
@@ -76,3 +76,29 @@ async function main() {
 main();
 
 // NOTE - to run the file use node index.js in the terminal
+
+discordClient.commands = new Collection();
+
+const fs = require('node:fs');
+const path = require('node:path');
+const foldersPath = path.join(__dirname, 'commands');
+const commandFolders = fs.readdirSync(foldersPath);
+
+for (const folder of commandFolders) {
+	const commandsPath = path.join(foldersPath, folder);
+	const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+	for (const file of commandFiles) {
+		const filePath = path.join(commandsPath, file);
+		const command = require(filePath);
+		// Set a new item in the Collection with the key as the command name and the value as the exported module
+		if ('data' in command && 'execute' in command) {
+			discordClient.commands.set(command.data.name, command);
+		} else {
+			console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+		}
+	}
+}
+
+discordClient.on(Events.InteractionCreate, interaction => {
+	console.log(interaction);
+});

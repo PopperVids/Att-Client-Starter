@@ -10,6 +10,7 @@
   "author": "TheRavenSeb",
   "license": "ISC",
   "dependencies": {
+    "@discordjs/builders": "^1.9.0",
     "@types/node": "^18.0.6",
     "att-client": "^0.4.13",
     "discord.js": "^14.16.2",
