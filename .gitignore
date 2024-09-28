@@ -16,3 +16,6 @@ build/
 # Ignore dependency lock files
 package-lock.json
 yarn.lock
+
+# Ignore the discord configuration file
+config.json
