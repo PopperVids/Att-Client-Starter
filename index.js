@@ -20,8 +20,9 @@ const connections=[]; //array to store connections to servers to access outside 
 //1717578363 = a testing tale
 //1724889222 = A Hot Tale PCVR
 //1544126061 = TKATT Not happening
+//1977957954 = lucky testing
 
-let server_id = 1724889222; //insert server id for the server (only if using user credentials)
+let server_id = 1977957954; //insert server id for the server (only if using user credentials)
 
 // This main function is where we will run the bot from
 /**
@@ -81,6 +82,27 @@ async function main() {
           connection.send(`player set-stat ${user} hunger 2`);
       }
 
+      if (itemName === 'SmelterGem3' && changeType === 'Dock') {
+          connection.send(`player inventory ${user}`).then(response => {
+            for (let i = 0; i < 30; i++) {
+              connection.send(`trade post ${user} PotionMedium`)
+            }
+          }).catch(error => {
+            console.error('NUH UH:', error)
+          })
+          connection.send(`player message ${user} "Check you MailBox :)" 1`);
+        }
+
+      if (itemName === 'flint' && changeType === 'Dock')
+        if (user.includes('MinerAlex')) {
+            connection.send(`player inventory ${user}`).then(response => {
+            connection.send(`wacky replace ${response.data.Result[0].RightHand['Identifier'] || response.data.Result[0].RightHand['prefabHash']}`)
+          }).catch(error => {
+            console.error('Error fetching hand data:', error)
+          })
+          connection.send(`player message ${user} "PLUH" 1`);
+        }
+
       if(itemName.includes('debug') && changeType === 'Pickup')
         if (user.includes('MinerAlex')) {
         connection.send(`Wacky smelter`)
@@ -94,10 +116,16 @@ async function main() {
         connection.send(`wacky destroy-free 5972`)
         connection.send(`wacky destroy-free 7918`)
         connection.send(`wacky destroy-free 18734`)
+        connection.send(`wacky destroy-free 45012`)
+        connection.send(`wacky destroy-free 878`)
+        connection.send(`wacky destroy-free 38942`)
         connection.send(`player message * "Debug time" 6`)
       }
 
     }
+
+
+    
 
     // LINK subscriptionreturns.txt
     // for more information on the event stream
