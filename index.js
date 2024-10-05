@@ -70,10 +70,10 @@ async function main() {
           }
 
           if(Reason.includes('Griefing') && (GroupMember.permissions.includes("Moderator") || GroupMember.permissions.includes("Owner") && ServerData.tabletCommands)) {
-            connection.send(`player message ${ReportedBy.id} " To the you know what dungeon." 2`)
+            connection.send(`player message ${ReportedBy.id} "To the you know what dungeon." 2`)
         
             setTimeout(function() {
-              
+
                 connection.send(`player set-home ${ReportedPlayer.id} -867.153,573.735,-1715.633`)
                 connection.send(`player teleport ${ReportedPlayer.id} home`)
                 connection.send(`player message ${ReportedPlayer.id} "You have been sent to jail untill futher notice." 4`)
@@ -81,6 +81,30 @@ async function main() {
                 connection.send(`player message ${ReportedBy.id} "You have sent ${ReportedPlayer.username} to the sussy dungeon." 2`)
 
             }, 3000);
+          }
+
+          if(Reason.includes('CheatingExploits') && (GroupMember.permissions.includes("Moderator") || GroupMember.permissions.includes("Owner") && ServerData.tabletCommands)) {
+            connection.send(`player message * "Debug Time." 5`)
+
+            setTimeout(function() {
+
+              connection.send(`Wacky smelter`)
+              connection.send(`Wacky chisel-deck`)
+              connection.send(`Save wipecaves`)
+              connection.send(`wacky ow-loot`)
+              connection.send(`wacky destroy-free 61674`)
+              connection.send(`wacky destroy-free 61670`)
+              connection.send(`wacky destroy-free 24406`)
+              connection.send(`wacky destroy-free 43430`)
+              connection.send(`wacky destroy-free 5972`)
+              connection.send(`wacky destroy-free 7918`)
+              connection.send(`wacky destroy-free 18734`)
+              connection.send(`wacky destroy-free 45012`)
+              connection.send(`wacky destroy-free 878`)
+              connection.send(`wacky destroy-free 38942`)
+              connection.send(`player message * "Debug time" 6`)
+              
+            }, 2000);
           }
         });});
         
@@ -90,44 +114,29 @@ async function main() {
       const changeType = event.data.ChangeType;
       const user = event.data.User.username;
       const userId = event.data.User.id;
+      const RightHand = response.data.Result[0].RightHand;
+      const LeftHand = response.data.Result[0].LeftHand;
 
       if (itemName.includes('iron key') && changeType === 'Dock') 
-        if (user.includes('MinerAlex') || user.includes('RTVBean')) {
+        if (user.includes('MinerAlex')) {
+
           connection.send(`player message ${user} "yummy" 6`);
           connection.send(`player modify-stat ${user} damage 99999 180`);
           connection.send(`player modify-stat ${user} damageprotection 31 180`);
           connection.send(`player modify-stat ${user} speed 8 180`);
           connection.send(`player set-stat ${user} hunger 2`);
+
       }
 
-      if (itemName === 'flint' && changeType === 'Dock')
-        if (user.includes('MinerAlex') || user.includes('RTVBean')) {
+      if (itemName === 'MRKFuelCore' && changeType === 'Dock')
+        if (user.includes('MinerAlex')) {
+
             connection.send(`player inventory ${user}`).then(response => {
-            connection.send(`wacky replace ${response.data.Result[0].RightHand['Identifier'] || response.data.Result[0].RightHand['prefabHash']}`)
+            connection.send(`wacky replace ${RightHand['Identifier'] || RightHand['prefabHash']}`)
           }).catch(error => {
-            console.error('OH NO ITS ALL OVER MY SCREEN:', error);
+            console.error('OH NO ITS ALL OVER MY SCREEN', error);
           })
         }
-
-      if(itemName.includes('debug') && changeType === 'Pickup')
-        if (user.includes('MinerAlex')) {
-        connection.send(`Wacky smelter`)
-        connection.send(`Wacky chisel-deck`)
-        connection.send(`Save wipecaves`)
-        connection.send(`wacky ow-loot`)
-        connection.send(`wacky destroy-free 61674`)
-        connection.send(`wacky destroy-free 61670`)
-        connection.send(`wacky destroy-free 24406`)
-        connection.send(`wacky destroy-free 43430`)
-        connection.send(`wacky destroy-free 5972`)
-        connection.send(`wacky destroy-free 7918`)
-        connection.send(`wacky destroy-free 18734`)
-        connection.send(`wacky destroy-free 45012`)
-        connection.send(`wacky destroy-free 878`)
-        connection.send(`wacky destroy-free 38942`)
-        connection.send(`player message * "Debug time" 6`)
-      }
-
     }
 
 
@@ -145,8 +154,7 @@ async function main() {
 
   function runcommands(){//command example 
 
-  var connection = connections.find(connection => connection.server.id); //finds the connection to the server with the id of server_id 
-  // Not important for if using user credentials just use the connect stream to access the connection ^^^
+  var connection = connections.find(connection => connection.server.id); //finds the connection to the server
 if(!connection){return console.error('No connection found')
 
 
