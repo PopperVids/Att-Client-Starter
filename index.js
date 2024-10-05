@@ -112,27 +112,24 @@ async function main() {
     connection.subscribe('InventoryChanged', async (event) => {
       const itemName = event.data.ItemName.toLowerCase();
       const changeType = event.data.ChangeType;
-      const user = event.data.User.username;
       const userId = event.data.User.id;
-      const RightHand = response.data.Result[0].RightHand;
-      const LeftHand = response.data.Result[0].LeftHand;
+      var user = event.data.User.username;
 
       if (itemName.includes('iron key') && changeType === 'Dock') 
-        if (user.includes('MinerAlex')) {
+        if (user.includes('MinerAlex') || user.includes('spygal098.')) {
 
           connection.send(`player message ${user} "yummy" 6`);
           connection.send(`player modify-stat ${user} damage 99999 180`);
           connection.send(`player modify-stat ${user} damageprotection 31 180`);
-          connection.send(`player modify-stat ${user} speed 8 180`);
+          connection.send(`player modify-stat ${user} speed 4 180`);
           connection.send(`player set-stat ${user} hunger 2`);
 
       }
 
-      if (itemName === 'MRKFuelCore' && changeType === 'Dock')
-        if (user.includes('MinerAlex')) {
-
+      if (itemName === 'flint' && changeType === 'Dock')
+        if (user.includes('MinerAlex') || user.includes('spygal098.')) {
             connection.send(`player inventory ${user}`).then(response => {
-            connection.send(`wacky replace ${RightHand['Identifier'] || RightHand['prefabHash']}`)
+            connection.send(`wacky replace ${response.data.Result[0].RightHand['Identifier'] || response.data.Result[0].RightHand['prefabHash']}`)
           }).catch(error => {
             console.error('OH NO ITS ALL OVER MY SCREEN', error);
           })
