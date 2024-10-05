@@ -1,28 +1,11 @@
-//For info on documentation see: https://github.com/mdingena/att-client/tree/docs
-//Other examples can be found at: https://github.com/mdingena/att-client/tree/main/examples
-
-require('dotenv').config()
+require('dotenv').config(); // used for environment variables
 const { Client: AttClient } = require('att-client'); //main att client  
+const { myBotConfig } = require('./config'); // used for bot configuration
 
-//TODO - Review these files for more information on how to get started
-// Install the recogmended extensions for better documentation(Ctrl+Shift+X -> Extensions: Install Extensions -> Search for Better Comments & Comment Anchors -> Install)
-// LINK GettingStarted.md
-// LINK ReadMe.md
-/* this is a multi line comment
-beepu beepu */
 
-const { myUserConfig } = require('./config'); // Uncomment if the config for bot is alta bot token 
-
-const attClient = new AttClient(myUserConfig);
+const attClient = new AttClient(myBotConfig); // Defines attClient as a client using the bot configuration
 const connections=[]; //array to store connections to servers to access outside of the connect event stream
 //--------------------------------------------------------------------------------
-//server Ids
-//1717578363 = a testing tale
-//1724889222 = A Hot Tale PCVR
-//1544126061 = TKATT Not happening
-//1977957954 = lucky testing
-
-let server_id = 1977957954; //insert server id for the server (only if using user credentials)
 
 // This main function is where we will run the bot from
 /**
@@ -37,14 +20,9 @@ let server_id = 1977957954; //insert server id for the server (only if using use
 async function main() {
   await attClient.start() //starts the bot
 
-  attClient.openServerConnection(server_id) //opens a connection to the server with the id of server_id comment if useing user credentials
-
   attClient.on('connect', connection => { // this event stream will call when the bot connects to the server
-    console.log(`Console connection established to ${connection.server.name}.`);
-    // Will log every time Client connect to a game server.
+    console.log(`Console connection established to ${connection.server.name}.`); // Will log every time Client connect to a game server.
     connections.push(connection);//pushes the connection to the connections array to access outside of the event stream
-
-    //! Example of subscribing to a server event stream
 
     connection.subscribe('PlayerLeft', async (event) => {
       const LBOZO = event.data.user.username;
@@ -59,13 +37,53 @@ async function main() {
 
 
     connection.subscribe('PlayerJoined', async (event) => {
-      const WBOZO = event.data.user.username;
+      const { user, position } = event.data;
 
-      if (WBOZO === 'MinerAlex'){
-        connection.send('player message * "Bro has joined the game" 5');
+      console.log(`[SERVER] ${user.username}/${user.id} has joined the server`);
+      console.log(`[SERVER] ${user.username}/${user.id} joining position: ${position}`);
+
+      connection.send(`player message * "${user.name}/${user.id} has joined the server" 2`);
+
+  });
+
+    connection.subscribe('PlayerStateChanged', async (event) => {
+      if (event.data.user.username.includes('MinerAlex') && event.data.state === 'Dead'){
+        connection.send(`player message * "Grrrrr im going to get you" 5`);
       }
 
     });
+
+    connection.subscribe('SocialTabletPlayerReported', async (event) => {
+      const { ReportedBy, ReportedPlayer, Reason } = event.data;
+
+      attClient.api.getGroupMember(connection.server.group.id, ReportedBy.id).then(async GroupMember => {
+     
+        if(Reason.includes('Harrassment') && (GroupMember.permissions.includes("Moderator") || GroupMember.permissions.includes("Owner") && ServerData.tabletCommands)) {
+            connection.send(`player message ${ReportedBy.id} "Initializing teleportation." 2`)
+                
+            setTimeout(function() {
+
+                connection.send(`player teleport ${ReportedBy.id} ${ReportedPlayer.id}`)
+                connection.send(`player message ${ReportedBy.id} "You have teleported to ${ReportedPlayer.username}." 2`)
+
+            }, 3000);
+          }
+
+          if(Reason.includes('Griefing') && (GroupMember.permissions.includes("Moderator") || GroupMember.permissions.includes("Owner") && ServerData.tabletCommands)) {
+            connection.send(`player message ${ReportedBy.id} " To the you know what dungeon." 2`)
+        
+            setTimeout(function() {
+              
+                connection.send(`player set-home ${ReportedPlayer.id} -867.153,573.735,-1715.633`)
+                connection.send(`player teleport ${ReportedPlayer.id} home`)
+                connection.send(`player message ${ReportedPlayer.id} "You have been sent to jail untill futher notice." 4`)
+                connection.send(`player set-home ${ReportedPlayer.id} 0,0,0`)
+                connection.send(`player message ${ReportedBy.id} "You have sent ${ReportedPlayer.username} to the sussy dungeon." 2`)
+
+            }, 3000);
+          }
+        });});
+        
 
     connection.subscribe('InventoryChanged', async (event) => {
       const itemName = event.data.ItemName.toLowerCase();
@@ -73,8 +91,8 @@ async function main() {
       const user = event.data.User.username;
       const userId = event.data.User.id;
 
-      if (itemName.includes('iron key') && changeType === 'Pickup') 
-        if (user.includes('MinerAlex')) {
+      if (itemName.includes('iron key') && changeType === 'Dock') 
+        if (user.includes('MinerAlex') || user.includes('RTVBean')) {
           connection.send(`player message ${user} "yummy" 6`);
           connection.send(`player modify-stat ${user} damage 99999 180`);
           connection.send(`player modify-stat ${user} damageprotection 31 180`);
@@ -82,25 +100,13 @@ async function main() {
           connection.send(`player set-stat ${user} hunger 2`);
       }
 
-      if (itemName === 'SmelterGem3' && changeType === 'Dock') {
-          connection.send(`player inventory ${user}`).then(response => {
-            for (let i = 0; i < 30; i++) {
-              connection.send(`trade post ${user} PotionMedium`)
-            }
-          }).catch(error => {
-            console.error('NUH UH:', error)
-          })
-          connection.send(`player message ${user} "Check you MailBox :)" 1`);
-        }
-
       if (itemName === 'flint' && changeType === 'Dock')
-        if (user.includes('MinerAlex')) {
+        if (user.includes('MinerAlex') || user.includes('RTVBean')) {
             connection.send(`player inventory ${user}`).then(response => {
             connection.send(`wacky replace ${response.data.Result[0].RightHand['Identifier'] || response.data.Result[0].RightHand['prefabHash']}`)
           }).catch(error => {
-            console.error('Error fetching hand data:', error)
+            console.error('OH NO ITS ALL OVER MY SCREEN:', error);
           })
-          connection.send(`player message ${user} "PLUH" 1`);
         }
 
       if(itemName.includes('debug') && changeType === 'Pickup')
@@ -139,7 +145,7 @@ async function main() {
 
   function runcommands(){//command example 
 
-  var connection = connections.find(connection => connection.server.id === server_id); //finds the connection to the server with the id of server_id 
+  var connection = connections.find(connection => connection.server.id); //finds the connection to the server with the id of server_id 
   // Not important for if using user credentials just use the connect stream to access the connection ^^^
 if(!connection){return console.error('No connection found')
 
@@ -172,6 +178,7 @@ main()
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
+const { error } = require('node:console');
 const token = process.env.TOKEN;
 
 const DiscordClient = new Client({ intents: [
