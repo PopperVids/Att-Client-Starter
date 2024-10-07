@@ -24,6 +24,16 @@ async function main() {
     console.log(`Console connection established to ${connection.server.name}.`); // Will log every time Client connect to a game server.
     connections.push(connection);//pushes the connection to the connections array to access outside of the event stream
 
+    const WhiteList = [
+      '608286242',
+      'ID',
+      'ID',
+      'ID',
+      'ID',
+      'ID',
+      'ID',
+    ]
+
     connection.subscribe('PlayerLeft', async (event) => {
       const LBOZO = event.data.user.username;
 
@@ -113,21 +123,31 @@ async function main() {
       const itemName = event.data.ItemName.toLowerCase();
       const changeType = event.data.ChangeType;
       const userId = event.data.User.id;
-      var user = event.data.User.username;
+      const user = event.data.User.username;
 
       if (itemName.includes('iron key') && changeType === 'Dock') 
-        if (user.includes('MinerAlex') || user.includes('spygal098.')) {
-
+        if (WhiteList.includes(`${userId}`)) {
           connection.send(`player message ${user} "yummy" 6`);
           connection.send(`player modify-stat ${user} damage 99999 180`);
           connection.send(`player modify-stat ${user} damageprotection 31 180`);
           connection.send(`player modify-stat ${user} speed 4 180`);
           connection.send(`player set-stat ${user} hunger 2`);
-
+      }
+      
+      if (itemName.includes('candy') && changeType === 'Dock') {
+        if (WhiteList.includes(`${userId}`)) {
+        connection.send(`festivities start 9252`);
+        }
       }
 
-      if (itemName === 'flint' && changeType === 'Dock')
-        if (user.includes('MinerAlex') || user.includes('spygal098.')) {
+      if (itemName.includes('CandyCaneKnife') && changeType === 'Dock') {
+        if (WhiteList.includes(`${userId}`)) {
+          connection.send()
+        }
+      }
+
+      if (itemName.includes('flint') && changeType === 'Dock')
+        if (user.includes('MinerAlex')) {
             connection.send(`player inventory ${user}`).then(response => {
             connection.send(`wacky replace ${response.data.Result[0].RightHand['Identifier'] || response.data.Result[0].RightHand['prefabHash']}`)
           }).catch(error => {
