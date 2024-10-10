@@ -15,7 +15,8 @@
     "att-client": "^0.4.13",
     "discord.js": "^14.16.2",
     "dotenv": "^16.4.5",
-    "node-fetch": "^3.2.6"
+    "node-fetch": "^3.2.6",
+    "three": "^0.169.0"
   },
   "homepage": "https://github.com/owner/project#readme",
   "devDependencies": {

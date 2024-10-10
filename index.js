@@ -32,7 +32,9 @@ async function main() {
       'ID',
       'ID',
       'ID',
-    ]
+      'ID',
+      // Add more IDs if needed
+    ];
 
     connection.subscribe('PlayerLeft', async (event) => {
       const LBOZO = event.data.user.username;
@@ -47,10 +49,11 @@ async function main() {
 
 
     connection.subscribe('PlayerJoined', async (event) => {
-      const { user, position } = event.data;
+      const { user, mode, position } = event.data;
 
       console.log(`[SERVER] ${user.username}/${user.id} has joined the server`);
       console.log(`[SERVER] ${user.username}/${user.id} joining position: ${position}`);
+      console.log(`[SERVER] ${user.username}/${user.id} Joined Mode ${mode}`);
 
       connection.send(`player message * "${user.name}/${user.id} has joined the server" 2`);
 
@@ -98,21 +101,7 @@ async function main() {
 
             setTimeout(function() {
 
-              connection.send(`Wacky smelter`)
-              connection.send(`Wacky chisel-deck`)
-              connection.send(`Save wipecaves`)
-              connection.send(`wacky ow-loot`)
-              connection.send(`wacky destroy-free 61674`)
-              connection.send(`wacky destroy-free 61670`)
-              connection.send(`wacky destroy-free 24406`)
-              connection.send(`wacky destroy-free 43430`)
-              connection.send(`wacky destroy-free 5972`)
-              connection.send(`wacky destroy-free 7918`)
-              connection.send(`wacky destroy-free 18734`)
-              connection.send(`wacky destroy-free 45012`)
-              connection.send(`wacky destroy-free 878`)
-              connection.send(`wacky destroy-free 38942`)
-              connection.send(`player message * "Debug time" 6`)
+              
               
             }, 2000);
           }
@@ -147,9 +136,34 @@ async function main() {
       }
 
       if (itemName.includes('flint') && changeType === 'Dock')
-        if (user.includes('MinerAlex')) {
+        if (WhiteList.includes(`${userId}`)) {
             connection.send(`player inventory ${user}`).then(response => {
             connection.send(`wacky replace ${response.data.Result[0].RightHand['Identifier'] || response.data.Result[0].RightHand['prefabHash']}`)
+          }).catch(error => {
+            console.error('OH NO ITS ALL OVER MY SCREEN', error);
+          })
+        }
+
+        if (itemName.includes(`flower blue`) && changeType === 'UnDock') {
+          if (WhiteList.includes(`${userId}`))
+            connection.send(`player detailed ${user}`).then(response => {
+          if (response.data.Result[0].RightHand.Position[1] > response.data.Result.HeadPosition[1]){
+            connection.send(`player message ${user} "PLUH" 5`)
+          }
+          }).catch(error => {
+            console.error('OH NO ITS ALL OVER MY SCREEN', error);
+          })
+        }
+
+        if (itemName.includes(`flower red`) && changeType === 'Dock') {
+          if (WhiteList.includes(`${userId}`))
+            connection.send(`player message MinerAlex "Red" 6`)
+        }
+
+        if (itemName.includes(`smelter gem`) && changeType === 'Dock') {
+          if (WhiteList.includes(`${userId}`))
+            connection.send(`player list`).then(response => {
+          connection.send(`player message ${user} "${response.data.Result}" 6`)
           }).catch(error => {
             console.error('OH NO ITS ALL OVER MY SCREEN', error);
           })
