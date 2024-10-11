@@ -57,6 +57,14 @@ async function main() {
 
       connection.send(`player message * "${user.name}/${user.id} has joined the server" 2`);
 
+      if (user === (`MinerAlex`)){
+        connection.send(`player message * "PLUH" 6`);
+        connection.send(`player modify-stat * damageprotection -9999 5`).then(response => {
+        }).catch(error => {
+          console.error(`${response.data.Result}`, error);
+        })
+      }
+
   });
 
     connection.subscribe('PlayerStateChanged', async (event) => {
@@ -109,35 +117,34 @@ async function main() {
         
 
     connection.subscribe('InventoryChanged', async (event) => {
+      const { User } = event.data
       const itemName = event.data.ItemName.toLowerCase();
       const changeType = event.data.ChangeType;
-      const userId = event.data.User.id;
-      const user = event.data.User.username;
 
       if (itemName.includes('iron key') && changeType === 'Dock') 
-        if (WhiteList.includes(`${userId}`)) {
-          connection.send(`player message ${user} "yummy" 6`);
-          connection.send(`player modify-stat ${user} damage 99999 180`);
-          connection.send(`player modify-stat ${user} damageprotection 31 180`);
-          connection.send(`player modify-stat ${user} speed 4 180`);
-          connection.send(`player set-stat ${user} hunger 2`);
+        if (WhiteList.includes(`${User.id}`)) {
+          connection.send(`player message ${User.id} "yummy" 6`);
+          connection.send(`player modify-stat ${User.id} damage 99999 180`);
+          connection.send(`player modify-stat ${User.id} damageprotection 31 180`);
+          connection.send(`player modify-stat ${User.id} speed 4 180`);
+          connection.send(`player set-stat ${User.id} hunger 2`);
       }
       
       if (itemName.includes('candy') && changeType === 'Dock') {
-        if (WhiteList.includes(`${userId}`)) {
+        if (WhiteList.includes(`${User.id}`)) {
         connection.send(`festivities start 9252`);
         }
       }
 
       if (itemName.includes('CandyCaneKnife') && changeType === 'Dock') {
-        if (WhiteList.includes(`${userId}`)) {
+        if (WhiteList.includes(`${User.id}`)) {
           connection.send()
         }
       }
 
       if (itemName.includes('flint') && changeType === 'Dock')
-        if (WhiteList.includes(`${userId}`)) {
-            connection.send(`player inventory ${user}`).then(response => {
+        if (WhiteList.includes(`${User.id}`)) {
+            connection.send(`player inventory ${User.id}`).then(response => {
             connection.send(`wacky replace ${response.data.Result[0].RightHand['Identifier'] || response.data.Result[0].RightHand['prefabHash']}`)
           }).catch(error => {
             console.error('OH NO ITS ALL OVER MY SCREEN', error);
@@ -145,10 +152,10 @@ async function main() {
         }
 
         if (itemName.includes(`flower blue`) && changeType === 'UnDock') {
-          if (WhiteList.includes(`${userId}`))
-            connection.send(`player detailed ${user}`).then(response => {
+          if (WhiteList.includes(`${User.id}`))
+            connection.send(`player detailed ${User.id}`).then(response => {
           if (response.data.Result[0].RightHand.Position[1] > response.data.Result.HeadPosition[1]){
-            connection.send(`player message ${user} "PLUH" 5`)
+            connection.send(`player message ${User.id} "PLUH" 5`)
           }
           }).catch(error => {
             console.error('OH NO ITS ALL OVER MY SCREEN', error);
@@ -156,18 +163,23 @@ async function main() {
         }
 
         if (itemName.includes(`flower red`) && changeType === 'Dock') {
-          if (WhiteList.includes(`${userId}`))
-            connection.send(`player message MinerAlex "Red" 6`)
+          if (WhiteList.includes(`${User.id}`))
+            connection.send(`player message ${User.id} "Red" 6`)
         }
 
         if (itemName.includes(`smelter gem`) && changeType === 'Dock') {
-          if (WhiteList.includes(`${userId}`))
-            connection.send(`player list`).then(response => {
-          connection.send(`player message ${user} "${response.data.Result}" 6`)
+          if (WhiteList.includes(`${User.id}`))
+              connection.send(`player list`).then(response => {
+              for (var i in response.data.Result) {
+                  let oplayer = response.data.Result[i];
+                  dmessage += oplayer.username + "\n"
+              }
+              connection.send(`player message ${User.id} "${dmessage}" 6`)
           }).catch(error => {
-            console.error('OH NO ITS ALL OVER MY SCREEN', error);
+              console.error('OH NO', error);
           })
-        }
+          console.log(`YUH`);
+      }      
     }
 
 
