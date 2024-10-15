@@ -1,7 +1,7 @@
 
 # Miners Bot
 
-Just the github for my bot nothing to special
+Just the repository for my bot nothing to special
 
 
 ## Roadmap
