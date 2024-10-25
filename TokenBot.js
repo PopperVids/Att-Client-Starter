@@ -1,10 +1,12 @@
 require('dotenv').config(); // used for environment variables
 const { Client: AttClient } = require('att-client'); //main att client  
 const { myBotConfig } = require('./config'); // used for bot configuration
+const { Prefab } = require ('att-string-transcoder');
 
 
 const attClient = new AttClient(myBotConfig); // Defines attClient as a client using the bot configuration
 const connections=[]; //array to store connections to servers to access outside of the connect event stream
+exports.attbot = attClient;
 //--------------------------------------------------------------------------------
 
 // This main function is where we will run the bot from
@@ -136,53 +138,65 @@ async function main() {
         }
       }
 
-      if (itemName.includes('CandyCaneKnife') && changeType === 'Dock') {
-        if (WhiteList.includes(`${User.id}`)) {
-          connection.send()
-        }
-      }
-
-      if (itemName.includes('flint') && changeType === 'Dock')
+      if (itemName.includes('flower red') && changeType === 'Dock')
         if (WhiteList.includes(`${User.id}`)) {
             connection.send(`player inventory ${User.id}`).then(response => {
             connection.send(`wacky replace ${response.data.Result[0].RightHand['Identifier'] || response.data.Result[0].RightHand['prefabHash']}`)
           }).catch(error => {
             console.error('OH NO ITS ALL OVER MY SCREEN', error);
           })
+          console.log(`${User} replaced item`)
         }
 
-        if (itemName.includes(`flower blue`) && changeType === 'UnDock') {
-          if (WhiteList.includes(`${User.id}`))
-            connection.send(`player detailed ${User.id}`).then(response => {
-          if (response.data.Result[0].RightHand.Position[1] > response.data.Result.HeadPosition[1]){
-            connection.send(`player message ${User.id} "PLUH" 5`)
-          }
-          }).catch(error => {
-            console.error('OH NO ITS ALL OVER MY SCREEN', error);
-          })
-        }
-
-        if (itemName.includes(`flower red`) && changeType === 'Dock') {
-          if (WhiteList.includes(`${User.id}`))
-            connection.send(`player message ${User.id} "Red" 6`)
-        }
-
+        let dmessage = '';
         if (itemName.includes(`smelter gem`) && changeType === 'Dock') {
           if (WhiteList.includes(`${User.id}`))
-              connection.send(`player list`).then(response => {
-              for (var i in response.data.Result) {
-                  let oplayer = response.data.Result[i];
+              for (var i in connection.server.players) {
+                  let oplayer = connection.server.players[i];
                   dmessage += oplayer.username + "\n"
               }
-              connection.send(`player message ${User.id} "${dmessage}" 6`)
-          }).catch(error => {
-              console.error('OH NO', error);
-          })
-          console.log(`YUH`);
-      }      
-    }
+          connection.send(`player message ${User.id} "${dmessage}" 6`)
+          console.log(`player list`);
+      }
+      
+if (itemName.includes('flower blue') && changeType === 'Dock') {
+  if (WhiteList.includes(`${User.id}`)) {
+    connection.send(`player detailed ${User.id}`).then(response => {
+      const RDR = response.data.Result;
+      let resultString = '';
 
+      for (let i in RDR) {
+        if (i === 'Position') {
+          resultString += `${i} ${RDR[i]}\n`;
+        }
+      }
 
+      console.log(resultString);
+    }).catch(error => {
+      console.error('OH MY GOODNESS', error);
+    });
+  }
+}
+if (itemName.includes(`CandyCaneKnife`) && changeType === 'Dock') {
+  if (WhiteList.includes(`${User.id}`)) {
+    const spit = new Prefab('Wyrm_Spit');
+
+    spit.setPosition(playerRightHandPosition);
+    spit.setRotation(playerRightHandUpInverted);
+    spit.setVelocity(playerRightHandUpInvertedMultiplied);
+    spit.print();
+    const commandResult = await attClient.send('...');
+const saveString = commandResult.data.ResultString;
+
+const prefab = Prefab.fromSaveString(saveString);
+prefab.setOnFire();
+
+const newSaveString = prefab.toSaveString();
+
+await attClient.send(`spawn string-raw ${newSaveString}`);
+  }
+ }
+}
     
 
     // LINK subscriptionreturns.txt
@@ -198,32 +212,10 @@ async function main() {
   function runcommands(){//command example 
 
   var connection = connections.find(connection => connection.server.id); //finds the connection to the server
-if(!connection){return console.error('No connection found')
+if(!connection){return console.error('oh my pluh')
 
 
-} else{//if no connection is found log an error
-  // Send a command to send a message to att
-     // all commands admins can send bots can too!!
-
-
-
-  // Examples of getting data from the server 
-
-
-  // Get the player list
-  connection.send('player list').then(response => {
-    const players = response.data.Result;
-
-    //cycle through the players and log their names
-    for(var i = 0; i < players.length; i++){
-      console.log(players[i].username)
-    }
-  });}}
-
-
-
-
-}
+}}}
 main()
 
 const fs = require('node:fs');
