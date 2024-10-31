@@ -17,6 +17,7 @@
     "discord.js": "^14.16.3",
     "dotenv": "^16.4.5",
     "node-fetch": "^3.2.6",
+    "say": "^0.16.0",
     "three": "^0.169.0"
   },
   "homepage": "https://github.com/owner/project#readme",

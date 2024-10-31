@@ -2,6 +2,7 @@ require("dotenv").config(); // used for environment variables
 const { Client: AttClient } = require("att-client"); //main att client
 const { myBotConfig } = require("./config"); // used for bot configuration
 const { Prefab } = require("att-string-transcoder");
+const { say } = require("say"); // for text to speech
 
 const attClient = new AttClient(myBotConfig); // Defines attClient as a client using the bot configuration
 const connections = []; //array to store connections to servers to access outside of the connect event stream
@@ -24,7 +25,8 @@ async function main() {
   attClient.on("connect", (connection) => {
     // this event stream will call when the bot connects to the server
     console.log(`Console connection established to ${connection.server.name}.`); // Will log every time Client connect to a game server.
-    connections.push(connection); //pushes the connection to the connections array to access outside of the event stream
+   connections.push(connection); //pushes the connection to the connections array to access outside of the event stream
+    say.speak(`connection established to ${connection.server.name}`)
 
     const WhiteList = [
       "608286242",
@@ -62,12 +64,7 @@ async function main() {
 
       if (user === `MinerAlex`) {
         connection.send(`player message * "PLUH" 6`);
-        connection
-          .send(`player modify-stat * damageprotection -9999 5`)
-          .then((response) => {})
-          .catch((error) => {
-            console.error(`${response.data.Result}`, error);
-          });
+        connection.send(`player modify-stat * Luminosity -9999 5`).catch((error) => {console.error(`${response.data.Result}`, error);});
       }
     });
 
@@ -171,6 +168,7 @@ async function main() {
             })
             .catch((error) => {
               console.error("OH NO ITS ALL OVER MY SCREEN", error);
+              say.speak('OH MY GOODNESS')
             });
           console.log(`${User} replaced item`);
         }
@@ -201,6 +199,7 @@ async function main() {
             console.log(resultString);
           }).catch((error) => {
             console.error("OH MY GOODNESS:", error);
+            say.speak('OH MY GOODNESS')
           });
       }
 
@@ -218,17 +217,19 @@ async function main() {
           })
           .catch((error) => {
             console.error("OH MY GOODNESS:", error);
+            say.speak('OH MY GOODNESS')
           });
       }
     });
 
-    connection.subscribe("CommandExecuted", async (event) => {
+    connection.subscribe("CommandExecuted", async (event) => { // CommandExecuted will be used for voice commands
         var pluhCOMMAND = event.data.Command;
         const me = 'MinerAlex';
 
         if (pluhCOMMAND === "PLUH") {
           connection.send(`player message * "PLUH" 6`);
           console.log(`PLUH`);
+          say.speak('PLUH')
         }
       }
 
