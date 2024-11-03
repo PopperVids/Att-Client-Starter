@@ -186,6 +186,7 @@ async function main() {
   connection.send(`player detailed ${User.id}`).then((response) => {
     const x = response.data.Result.Position[0];
     const y = response.data.Result.Position[1] + 50;
+    const yb = response.data.Result.Position[1];
     const z = response.data.Result.Position[2];
     
     connection.send(`player modify-stat DamageProtection 10 10`);
@@ -194,8 +195,7 @@ async function main() {
     connection.send(`player teleport ${User.id} home`)
     connection.send(`player set-home ${User.id} 0,0,0`)
 
-    console.log(`${y}`)
-    console.log("Fling object:", POS);
+    console.log(`${yb} new value ${y}`)
   }).catch((error) => {
     console.error("This is so not pluh:", error);
   });
@@ -206,7 +206,7 @@ async function main() {
             let resultString = "";
 
             for (let i in DRDR) {
-              resultString += `${i} ${DRDR[i]}\n`;
+              resultString += `${DRDR}\n`;
             }
 
             console.log(resultString);
