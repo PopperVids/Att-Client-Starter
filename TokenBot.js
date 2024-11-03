@@ -184,26 +184,20 @@ async function main() {
 
  if (itemName.includes("flower blue") && changeType === "Dock") {
   connection.send(`player detailed ${User.id}`).then((response) => {
-    const POS = response.data.Result;
-    let resultString = "";
+    const x = response.data.Result.Position[0];
+    const y = response.data.Result.Position[1] + 50;
+    const z = response.data.Result.Position[2];
+    
+    connection.send(`player modify-stat DamageProtection 10 10`);
+    connection.send(`player modify-stat CrippleDamageProtection 10 10`);
+    connection.send(`player set-home ${User.id} ${x},${y},${z}`);
+    connection.send(`player teleport ${User.id} home`)
+    connection.send(`player set-home ${User.id} 0,0,0`)
 
-    if (POS && Array.isArray(POS["Position"]) && POS["Position"].length === 3) {
-      const [x, y, z] = POS["Position"];
-      resultString += `${x},${y + 50},${z}\n`;
-    } else {
-      console.log("This is so not PLUH:");
-    }
-
-    console.log(resultString);
+    console.log(`${y}`)
     console.log("Fling object:", POS);
-    connection.send(`player modify-stat ${User.id} DamageProtection 10 10`)
-    connection.send(`player modify-stat ${User.id} CrippleDamageProtection 10 10`);
-    connection.send(`player set-home ${User.id} ${resultString}`);
-    connection.send(`player teleport ${User.id} home`);
-    connection.send(`player message ${User.id} "PLUH" 3`);
-    connection.send(`player set-home ${User.id} 0,0,0`);
   }).catch((error) => {
-    console.error("Error occurred while extracting coordinates:", error);
+    console.error("This is so not pluh:", error);
   });
 }
       if (itemName.includes("debug") && changeType === "Dock") {
