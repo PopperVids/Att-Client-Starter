@@ -26,7 +26,6 @@ async function main() {
     // this event stream will call when the bot connects to the server
     console.log(`Console connection established to ${connection.server.name}.`); // Will log every time Client connect to a game server.
    connections.push(connection); //pushes the connection to the connections array to access outside of the event stream
-    say.speak(`connection established to ${connection.server.name}`)
 
     const WhiteList = [
       "608286242",
@@ -168,9 +167,8 @@ async function main() {
             })
             .catch((error) => {
               console.error("OH NO ITS ALL OVER MY SCREEN", error);
-              say.speak('OH MY GOODNESS')
             });
-          console.log(`${User} replaced item`);
+          console.log(`${event.data.User.username}/${event.data.User.id} replaced item`);
         }
 
       let dmessage = "";
@@ -184,25 +182,30 @@ async function main() {
         console.log(`player list`);
       }
 
-      if (itemName.includes("flower blue") && changeType === "Dock") {
-        connection.send(`player detailed ${User.id}`).then((response) => {
-            const RDR = response.data.Result;
-            let resultString = "";
+ if (itemName.includes("flower blue") && changeType === "Dock") {
+  connection.send(`player detailed ${User.id}`).then((response) => {
+    const POS = response.data.Result;
+    let resultString = "";
 
-            for (let i in RDR) {
-              if (i === "Position") {
-                RDR[i].Y = Math.random() * 50; // Set the Y position to a random value between 0 and 50
-                resultString += `${i} ${RDR[i]}\n`;
-              }
-            }
+    if (POS && Array.isArray(POS["Position"]) && POS["Position"].length === 3) {
+      const [x, y, z] = POS["Position"];
+      resultString += `${x},${y + 50},${z}\n`;
+    } else {
+      console.log("This is so not PLUH:");
+    }
 
-            console.log(resultString);
-          }).catch((error) => {
-            console.error("OH MY GOODNESS:", error);
-            say.speak('OH MY GOODNESS')
-          });
-      }
-
+    console.log(resultString);
+    console.log("Fling object:", POS);
+    connection.send(`player modify-stat ${User.id} DamageProtection 10 10`)
+    connection.send(`player modify-stat ${User.id} CrippleDamageProtection 10 10`);
+    connection.send(`player set-home ${User.id} ${resultString}`);
+    connection.send(`player teleport ${User.id} home`);
+    connection.send(`player message ${User.id} "PLUH" 3`);
+    connection.send(`player set-home ${User.id} 0,0,0`);
+  }).catch((error) => {
+    console.error("Error occurred while extracting coordinates:", error);
+  });
+}
       if (itemName.includes("debug") && changeType === "Dock") {
         connection.send(`debug server-stats`).then((response) => {
             const DRDR = response.data.Result;
@@ -217,7 +220,6 @@ async function main() {
           })
           .catch((error) => {
             console.error("OH MY GOODNESS:", error);
-            say.speak('OH MY GOODNESS')
           });
       }
     });
@@ -226,10 +228,10 @@ async function main() {
         var pluhCOMMAND = event.data.Command;
         const me = 'MinerAlex';
 
-        if (pluhCOMMAND === "PLUH") {
+        if (pluhCOMMAND === "ok") {
           connection.send(`player message * "PLUH" 6`);
+          connection.send(`player set-stat MinerAlex speed 7`)
           console.log(`PLUH`);
-          say.speak('PLUH')
         }
       }
 

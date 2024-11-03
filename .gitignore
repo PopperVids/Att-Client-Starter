@@ -17,5 +17,6 @@ build/
 package-lock.json
 yarn.lock
 
-# Ignore the discord configuration file
+# Ignore files that i want
 config.json
+SpeelBot.js
