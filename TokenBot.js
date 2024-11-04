@@ -7,18 +7,6 @@ const { say } = require("say"); // for text to speech
 const attClient = new AttClient(myBotConfig); // Defines attClient as a client using the bot configuration
 const connections = []; //array to store connections to servers to access outside of the connect event stream
 exports.attbot = attClient;
-//--------------------------------------------------------------------------------
-
-// This main function is where we will run the bot from
-/**
- * @function main
- * @description This function is the main function that will run the bot
- * @returns {Promise<void>}
- * @example
- * main()
- *
- */
-
 async function main() {
   await attClient.start(); //starts the bot
 
@@ -184,35 +172,28 @@ async function main() {
 
  if (itemName.includes("flower blue") && changeType === "Dock") {
   connection.send(`player detailed ${User.id}`).then((response) => {
-    const x = response.data.Result.Position[0];
-    const y = response.data.Result.Position[1] + 50;
-    const yb = response.data.Result.Position[1];
-    const z = response.data.Result.Position[2];
+    const POS = response.data.Result.Position
+    const x = POS[0]
+    const y = POS[1] += 50
+    const z = POS[2]
     
-    connection.send(`player modify-stat DamageProtection 10 10`);
-    connection.send(`player modify-stat CrippleDamageProtection 10 10`);
+    connection.send(`player modify-stat ${User.id} DamageProtection 100 10`);
     connection.send(`player set-home ${User.id} ${x},${y},${z}`);
     connection.send(`player teleport ${User.id} home`)
     connection.send(`player set-home ${User.id} 0,0,0`)
 
-    console.log(`${yb} new value ${y}`)
+    console.log(`Flung ${User.username}:`)
   }).catch((error) => {
     console.error("This is so not pluh:", error);
   });
 }
       if (itemName.includes("debug") && changeType === "Dock") {
         connection.send(`debug server-stats`).then((response) => {
-            const DRDR = response.data.Result;
-            let resultString = "";
+          const debuggers = response.data.Result.fps
+          const fps = debuggers[0]
 
-            for (let i in DRDR) {
-              resultString += `${DRDR}\n`;
-            }
-
-            console.log(resultString);
-            connection.send(`player message ${User.id} ${resultString}`);
-          })
-          .catch((error) => {
+          connection.send(`player message ${User.id} "${fps}" 6`);
+          }).catch((error) => {
             console.error("OH MY GOODNESS:", error);
           });
       }
@@ -220,12 +201,49 @@ async function main() {
 
     connection.subscribe("CommandExecuted", async (event) => { // CommandExecuted will be used for voice commands
         var pluhCOMMAND = event.data.Command;
-        const me = 'MinerAlex';
+        const me = "MinerAlex";
 
-        if (pluhCOMMAND === "ok") {
+        if (pluhCOMMAND === "speed") {
           connection.send(`player message * "PLUH" 6`);
-          connection.send(`player set-stat MinerAlex speed 7`)
+          connection.send(`player modify-stat ${me} speed 7 999999999`)
           console.log(`PLUH`);
+        }
+
+        if (pluhCOMMAND === "ghost") {
+          connection.send(`settings changesetting server downedStateDuration 60`);
+          connection.send(`player modify-stat ${me} DamageProtection 100 99999999`)
+          connection.send(`player kill ${me}`)
+          connection.send(`settings changesetting server downedStateDuration 0`)
+        }
+
+        if (pluhCOMMAND === "up"){
+          connection.send(`player detailed ${me}`).then((response) => {
+            const POS = response.data.Result.Position
+            const x = POS[0]
+            const y = POS[1] += 3
+            const z = POS[2]
+            
+            connection.send(`player set-home ${me} ${x},${y},${z}`);
+            connection.send(`player teleport ${me} home`)
+            connection.send(`player set-home ${me} 0,0,0`)
+          }).catch((error) => {
+            console.error("This is so not pluh:", error);
+          });    
+        }
+
+        if (pluhCOMMAND === "down"){
+          connection.send(`player detailed ${me}`).then((response) => {
+            const POS = response.data.Result.Position
+            const x = POS[0]
+            const y = POS[1] -= 3
+            const z = POS[2]
+            
+            connection.send(`player set-home ${me} ${x},${y},${z}`);
+            connection.send(`player teleport ${me} home`)
+            connection.send(`player set-home ${me} 0,0,0`)
+          }).catch((error) => {
+            console.error("This is so not pluh:", error);
+          });
         }
       }
 
