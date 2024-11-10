@@ -12,7 +12,7 @@
   "dependencies": {
     "@discordjs/builders": "^1.9.0",
     "@types/node": "^18.0.6",
-    "att-client": "^0.4.13",
+    "att-client": "^0.5.3",
     "att-string-transcoder": "^3.1.2",
     "discord.js": "^14.16.3",
     "dotenv": "^16.4.5",

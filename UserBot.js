@@ -31,7 +31,7 @@ async function main() {
 
     const WhiteList = [
         '608286242',
-        'ID',
+        '703910882',
         'ID',
         'ID',
         'ID',
@@ -81,7 +81,7 @@ async function main() {
       connection.subscribe("SocialTabletPlayerReported", async (event) => {
         const { ReportedBy, ReportedPlayer, Reason } = event.data;
   
-        attClient.api
+        bot.api
           .getGroupMember(connection.server.group.id, ReportedBy.id)
           .then(async (GroupMember) => {
             if (
@@ -259,8 +259,41 @@ async function main() {
               console.error("This is so not pluh:", error);
             });
           }
+  
+          if (pluhCOMMAND === "kill"){
+            connection.send(`player kill ${me}`)
+          }
+  
+          if (pluhCOMMAND === "forwards") {
+            connection.send(`player detailed ${me}`).then((response) => {
+              const POS = response.data.Result.Position
+              const x = POS[0]
+              const y = POS[1]
+              const z = POS[2] += 3
+              
+              connection.send(`player set-home ${me} ${x},${y},${z}`);
+              connection.send(`player teleport ${me} home`)
+              connection.send(`player set-home ${me} 0,0,0`)
+            }).catch((error) => {
+              console.error("This is so not pluh:", error);
+            });
+          }
+  
+          if (pluhCOMMAND === "backwards") {
+            connection.send(`player detailed ${me}`).then((response) => {
+              const POS = response.data.Result.Position
+              const x = POS[0]
+              const y = POS[1]
+              const z = POS[2] -= 3
+              
+              connection.send(`player set-home ${me} ${x},${y},${z}`);
+              connection.send(`player teleport ${me} home`)
+              connection.send(`player set-home ${me} 0,0,0`)
+            }).catch((error) => {
+              console.error("This is so not pluh:", error);
+            });
+          }
         }
-
         
     // LINK subscriptionreturns.txt
     // for more information on the event stream

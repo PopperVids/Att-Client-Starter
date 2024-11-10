@@ -245,6 +245,40 @@ async function main() {
             console.error("This is so not pluh:", error);
           });
         }
+
+        if (pluhCOMMAND === "kill"){
+          connection.send(`player kill ${me}`)
+        }
+
+        if (pluhCOMMAND === "forwards") {
+          connection.send(`player detailed ${me}`).then((response) => {
+            const POS = response.data.Result.Position
+            const x = POS[0]
+            const y = POS[1]
+            const z = POS[2] += 3
+            
+            connection.send(`player set-home ${me} ${x},${y},${z}`);
+            connection.send(`player teleport ${me} home`)
+            connection.send(`player set-home ${me} 0,0,0`)
+          }).catch((error) => {
+            console.error("This is so not pluh:", error);
+          });
+        }
+
+        if (pluhCOMMAND === "backwards") {
+          connection.send(`player detailed ${me}`).then((response) => {
+            const POS = response.data.Result.Position
+            const x = POS[0]
+            const y = POS[1]
+            const z = POS[2] -= 3
+            
+            connection.send(`player set-home ${me} ${x},${y},${z}`);
+            connection.send(`player teleport ${me} home`)
+            connection.send(`player set-home ${me} 0,0,0`)
+          }).catch((error) => {
+            console.error("This is so not pluh:", error);
+          });
+        }
       }
 
       // LINK subscriptionreturns.txt
@@ -301,7 +335,10 @@ for (const folder of commandFolders) {
 }
 
 DiscordClient.once(Events.ClientReady, (readyClient) => {
-  console.log(`Logged in as ${readyClient.user.tag}`);
+  console.log(`[Discord-Js] Login [User] ${readyClient.user.tag}`);
+  DiscordClient.user.setActivity({
+    name: ':3 PLUH',
+  })
 });
 
 DiscordClient.on(Events.InteractionCreate, async (interaction) => {
