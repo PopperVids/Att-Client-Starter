@@ -207,9 +207,11 @@ connection.subscribe("CommandExecuted", async (event) => { // CommandExecuted wi
  if (pluhCOMMAND === "table") {
    connection.send(`spawn ${me} TablePlacer 10`)
  }
+ if (pluhCOMMAND === "pluh") {
+   connection.send(`player message * "PLUH" 6`);
+ }
 }
 
-      // LINK subscriptionreturns.txt
       // for more information on the event stream
     );
     runcommands(); //runs the commands function

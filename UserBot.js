@@ -75,8 +75,19 @@ connection.subscribe("PlayerJoined", async (event) => {
   connection.send(`player message * "${user.name}/${user.id} has joined the server" 2`);
 
   if (user === `MinerAlex`) {
-    connection.send(`player message * "PLUH" 6`);
-    connection.send(`player modify-stat * Luminosity -9999 5`).catch((error) => {console.error(`${response.data.Result}`, error);});
+    connection.send(`player detailed MinerAlex`).then((response) => {
+      const POS = response.data.Result.Position
+      const x = POS[0]
+      const y = POS[1] += 50 
+      const z = POS[2]
+
+      connection.send(`player set-home MinerAlex ${x},${y},${z}`);
+      connection.send(`player modify-stat MinerAlex DamageProtection 100 10`)
+      connection.send(`player teleport MinerAlex home`)
+      connection.send(`player set-home MinerAlex 0,0,0`)
+    }).catch((error) => {
+      console.error("This is so not pluh:", error);
+    });
   }
 });
 
@@ -237,7 +248,6 @@ connection.subscribe("CommandExecuted", async (event) => { // CommandExecuted wi
   }
 }
         
-    // LINK subscriptionreturns.txt
     // for more information on the event stream
     );
 
